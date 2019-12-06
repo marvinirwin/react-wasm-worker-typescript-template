@@ -1,37 +1,28 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, {useEffect, useState} from 'react';
 import './App.css';
 /* eslint import/no-webpack-loader-syntax:0 */
 // @ts-ignore
 import MyWorker from 'worker-loader?name=dist/[name].js!./worker'
 
 const w = new MyWorker();
-// @ts-ignore
-w.onmessage = e => {
-  console.log(e.data)
-};
-// @ts-ignore
-w.postMessage('yeet?');
 
 const App: React.FC = () => {
+    const [reply, setReply] = useState('The worker running my .wasm hasnt replied yet...')
+    useEffect(() => {
+        // @ts-ignore
+        w.postMessage('yeet');
+
+        // @ts-ignore
+        w.onmessage = e => {
+            setReply(e.data)
+        };
+    }, []);
+    console.log(reply);
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+        <span>{reply}</span>
     </div>
   );
-}
+};
 
 export default App;

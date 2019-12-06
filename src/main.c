@@ -7,32 +7,46 @@
 
 #include <stdio.h>
 #include <emscripten.h>
+#include <unistd.h>
 
-void adx_store_data(const char *filepath, const char *data)
-{
+void writeFile(const char *filepath, const char *data) {
     FILE *fp = fopen(filepath, "ab");
-    if (fp != NULL)
-    {
+    if (fp != NULL) {
         fputs(data, fp);
         fclose(fp);
+    } else {
+        printf("Error writing file\n");
     }
 }
 
-int main() {
-
-    char c[1000];
-    FILE *fptr;
-    if ((fptr = fopen("big_blob.txt", "r")) == NULL)
-    {
-        printf("Error! opening file");
+void readFile(const char *filepath, char *dest) {
+    FILE *fp;
+    if ((fp = fopen(filepath, "r")) == NULL) {
+        printf("Error! opening file\n");
         // Program exits if file pointer returns NULL.
-        return 1;
+        return;
     }
     // reads text until newline
-    fscanf(fptr,"%[^\n]", c);
-    printf("Data from the file:\n%s", c);
-    fclose(fptr);
-    adx_store_data("./output.txt", c);
+    fscanf(fp, "%s", dest);
+    fclose(fp);
+}
+
+int main() {
+    char cwd[1024];
+    getcwd(cwd, sizeof(cwd));
+    printf("Current working dir: %s\n", cwd);
+
+    char c[1000];
+    // Read our data
+    readFile("/work/input.txt", c);
+
+    printf("%s\n", c);
+
+    // Simulate processing time...
+    emscripten_sleep(5000);
+
+    // Write our data!
+    writeFile("/work/output.txt", c);
 
 
     return 0;

@@ -68,8 +68,8 @@ Module["preRun"] = function () {
         FS.mount(fs, mount["opts"], mountpoint);
     });
 
-    FS.mkdir("/work");
-    FS.chdir("/work");
+    FS.mkdir("./work");
+    FS.chdir("./work");
 
     (__ffmpegjs_opts["MEMFS"] || []).forEach(function (file) {
         if (file["name"].match(/\//)) {
