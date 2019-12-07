@@ -26,28 +26,24 @@ void readFile(const char *filepath, char *dest) {
         // Program exits if file pointer returns NULL.
         return;
     }
-    // reads text until newline
-    fscanf(fp, "%s", dest);
+    int i = 0;
+    while(fscanf(fp, "%c", &dest[i]) != EOF)
+    {
+        i = i + 1;
+    }
+
     fclose(fp);
 }
 
 int main() {
-    char cwd[1024];
-    getcwd(cwd, sizeof(cwd));
-    printf("Current working dir: %s\n", cwd);
-
     char c[1000];
     // Read our data
-    readFile("/work/input.txt", c);
+    readFile("input.txt", c);
 
     printf("%s\n", c);
 
-    // Simulate processing time...
-    emscripten_sleep(5000);
-
     // Write our data!
-    writeFile("/work/output.txt", c);
-
+    writeFile("output.txt", c);
 
     return 0;
 }

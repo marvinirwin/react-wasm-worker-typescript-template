@@ -16,35 +16,31 @@ export const bufferedStdErr$ = stdErr$.pipe(buffer(stdErrFinished$), map(byteArr
 bufferedStdOut$.subscribe(v => console.log(v));
 bufferedStdErr$.subscribe(v => console.warn(v));
 
-// @ts-ignore
-self.window = self;
-
-// @ts-ignore
 const ctx: Worker = self as any;
+
+interface EmscriptenModule {
+    [key: string]: any
+}
+
 
 // Respond to message from parent thread
 ctx.onmessage = (ev) => {
     let message: string = ev.data;
-    const Module = {};
-    // @ts-ignore
-    Module.stdout = v => stdOut$.next(v);
-    // @ts-ignore
-    Module.stderr = v => stdErr$.next(v);
-    // @ts-ignore
+    const Module: EmscriptenModule  = {};
+
+    Module.stdout = (v: number) => stdOut$.next(v);
+    Module.stderr = (v: number) => stdErr$.next(v);
     Module.MEMFS = [
         {
             name: 'input.txt',
             data: (new TextEncoder()).encode(message),
         }
     ];
-    // @ts-ignore
     Module.arguments = ['input.txt'];
-    // @ts-ignore
-    Module.callback = files => {
-        console.log(files.MEMFS);
-        const v = files.MEMFS.pop().data;
+    Module.callback = (module: EmscriptenModule) => {
+        const v = module.MEMFS.pop().data;
+        // MEMFS will contain all the non-output files, see pre.js for more info
         ctx.postMessage(new TextDecoder('utf-8').decode(v));
     };
-    // @ts-ignore
     ReactWasm(Module);
 };

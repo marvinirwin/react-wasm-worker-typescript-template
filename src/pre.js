@@ -1,9 +1,3 @@
-function readBytes(bytePointer, length) {
-    // Buffer is an object supplied by the module object
-    const b = new Uint8ClampedArray(buffer, bytePointer, length);
-    return b;
-}
-
 var __ffmpegjs_utf8ToStr;
 
 __ffmpegjs_utf8ToStr = UTF8ArrayToString;
@@ -68,14 +62,15 @@ Module["preRun"] = function () {
         FS.mount(fs, mount["opts"], mountpoint);
     });
 
-    FS.mkdir("./work");
-    FS.chdir("./work");
+    FS.mkdir("/work");
+    FS.chdir("/work");
 
     (__ffmpegjs_opts["MEMFS"] || []).forEach(function (file) {
         if (file["name"].match(/\//)) {
             throw new Error("Bad file name");
         }
         var fd = FS.open(file["name"], "w+");
+        console.log(file["data"]);
         var data = __ffmpegjs_toU8(file["data"]);
         FS.write(fd, data, 0, data.length);
         FS.close(fd);

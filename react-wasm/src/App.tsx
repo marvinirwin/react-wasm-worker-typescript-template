@@ -7,17 +7,14 @@ import MyWorker from 'worker-loader?name=dist/[name].js!./worker'
 const w = new MyWorker();
 
 const App: React.FC = () => {
-    const [reply, setReply] = useState('The worker running my .wasm hasnt replied yet...')
+    let message = 'I just travelled through Browser -> Worker -> Wasm -> Browser!';
+    const [reply, setReply] = useState(`Sent "${message}" to executable`);
     useEffect(() => {
-        // @ts-ignore
-        w.postMessage('yeet');
 
-        // @ts-ignore
-        w.onmessage = e => {
-            setReply(e.data)
-        };
-    }, []);
-    console.log(reply);
+        w.onmessage = (e: MessageEvent) => setReply(e.data) ;
+        w.postMessage(message);
+
+    }, [message]);
   return (
     <div className="App">
         <span>{reply}</span>
