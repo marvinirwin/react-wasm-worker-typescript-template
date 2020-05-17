@@ -2,7 +2,7 @@
 export EMMAKEN_CFLAGS="-s ERROR_ON_UNDEFINED_SYMBOLS=0"
 WASM_FILENAME=react-wasm.wasm
 JS_FILENAME=react-wasm/src/wasm/react-wasm.js
-sudo docker run --rm -v $(pwd):/src trzeci/emscripten emcc \
+sudo docker run --rm -v $(pwd):/src trzeci/emscripten-upstream emcc \
     src/main.c \
     --pre-js src/pre.js \
     -s MODULARIZE=1 \
